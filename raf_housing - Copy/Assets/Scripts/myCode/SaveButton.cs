@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -44,7 +45,38 @@ public class SaveButton : MonoBehaviour
             }
         }
 
-        Debug.Log($"{_houseRotation}");
+        LocalSaveData data = new LocalSaveData
+        {
+            buttonName = saveButton.name,
+            token = SessionManager.Instance.AuthToken,
+            score = trackScore,
+            finalScore = score.text,
+            sliderValue = rotateSlider.value,
+            housePositions = _housePos,
+            houseRotations = _houseRotation,
+            clickTime = System.DateTime.UtcNow.ToString("o")
+        };
+
+        string path = Path.Combine(Application.dataPath, "LocalSave.json");
+
+        LocalSaveList log = new LocalSaveList();
+
+        // Load existing data
+        if (File.Exists(path))
+        {
+            string existingJson = File.ReadAllText(path);
+            if (!string.IsNullOrWhiteSpace(existingJson))
+            {
+                log = JsonUtility.FromJson<LocalSaveList>(existingJson);
+            }
+        }
+
+        log.logs.Add(data); 
+
+        string updatedJson = JsonUtility.ToJson(log, true);
+        File.WriteAllText(path, updatedJson);
+
+
 
         TelemetryManager.Instance.LogEvent("button_click", new Dictionary<string, object>
         {
@@ -58,4 +90,24 @@ public class SaveButton : MonoBehaviour
             { "clickTime", System.DateTime.UtcNow.ToString("o") }
         });
     }
+}
+
+
+[System.Serializable]
+public class LocalSaveData
+{
+    public string buttonName;
+    public string token;
+    public string score;
+    public string finalScore;
+    public float sliderValue;
+    public string housePositions;
+    public string houseRotations;
+    public string clickTime;
+}
+
+[System.Serializable]
+public class LocalSaveList
+{
+    public List<LocalSaveData> logs = new List<LocalSaveData>();
 }

@@ -12,6 +12,8 @@ public class SessionTracker : MonoBehaviour
         TelemetryManager.Instance.LogEvent("session_start", new Dictionary<string, object>
         {
             { "startTime", System.DateTime.UtcNow.ToString("o")},
+            { "token", SessionManager.Instance.AuthToken },
+            { "name", SessionManager.Instance._name },
         });
     }
 

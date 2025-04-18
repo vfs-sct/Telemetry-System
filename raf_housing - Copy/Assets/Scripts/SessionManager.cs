@@ -6,7 +6,7 @@ public class SessionManager : MonoBehaviour
 
     public string AuthToken { get; private set; }
 
-    public string _name;
+    public string _name { get; private set; }
     private void Awake()
     {
         if (Instance != null && Instance != this)
