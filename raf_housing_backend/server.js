@@ -5,7 +5,7 @@ import cors from 'cors';
 import router from "./authRoutes.js";
 import verifyToken from "./authMiddleware.js";
 import pool from "./db.js";
-
+import jwt from "jsonwebtoken";
 
 import path from "path";
 import { fileURLToPath } from "url";
